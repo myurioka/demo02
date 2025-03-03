@@ -36,8 +36,6 @@ sequenceDiagram
     participant R as Rust
     R->>H: Game impl Trait + 'static
     note over H: Game
-    R->>H: Point(RefCell::new(Point))
-    note over H: Point
     R->>H: Closure::wrap(Box::new(|_time:f64|()))
     H->>B: requestnimation()
     loop callback GAME.on_animation_frame
@@ -51,7 +49,7 @@ sequenceDiagram
     alt callback GAME.on_click
     H->>H: forget()
     B->>H: callback
-    H->>H: Update Point(MouseEvent)
+    H->>H: Update MouseEvent
     end
 ```
 <br>

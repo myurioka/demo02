@@ -55,27 +55,22 @@ impl GameLoop {
         let closure = Rc::new(RefCell::new(None));
         let closure_cloned = Rc::clone(&closure);
 
-        struct Point { x:i32, y:i32}
-        let mouse = Rc::new(RefCell::new(Point {x:0, y:0}));
-        let mouse_clone = mouse.clone();
+        let ref_game = Rc::new(RefCell::new(game));
+        let ref_game_clone = ref_game.clone();
 
         let mut frame = 0;
 
         closure_cloned.replace(Some(Closure::wrap(Box::new(move |_time: f64| {
             frame += 1;
             if frame % 5 == 0 {
-                game.set_click(mouse.borrow().x, mouse.borrow().y);
-                game.on_animation_frame();
-                mouse.borrow_mut().x = 10000;
-                mouse.borrow_mut().y = 10000;
+                ref_game.borrow_mut().on_animation_frame();
             }
             request_animation_frame(closure.borrow().as_ref().unwrap());
         }) as Box<dyn FnMut(f64)>)));
         request_animation_frame(closure_cloned.borrow().as_ref().unwrap());
 
         let c = Closure::wrap(Box::new(move |e:MouseEvent| {
-            mouse_clone.borrow_mut().x = e.client_x();
-            mouse_clone.borrow_mut().y = e.client_y();
+            ref_game_clone.borrow_mut().set_click(e.client_x(), e.client_y());
         }) as Box<dyn FnMut(_)>);
         _canvas.add_event_listener_with_callback(
             "mousedown",
